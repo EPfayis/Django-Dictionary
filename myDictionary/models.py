@@ -1,3 +1,5 @@
 from django.db import models
 
-# Create your models here.
+class TblSearchCount(models.Model):
+    date = models.DateField(null= False)
+    word = models.TextField(null= False)
