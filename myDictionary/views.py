@@ -13,9 +13,17 @@ class Dict(APIView):
         word = request.GET["word"]
         print("request accepted.")
 
-        objSearchCount = TblSearchCount()
-        objSearchCount.word = word
-        objSearchCount.date = datetime.now().date()
+        objSearchCount = TblSearchCount.objects.filter(word__iexact= word).filter(date= datetime.now().date())
+        if objSearchCount.count() == 0:
+            objSearchCount = TblSearchCount()
+            objSearchCount.date = datetime.now().date()
+            objSearchCount.word = word
+            objSearchCount.count = 1
+
+        else:
+            objSearchCount = objSearchCount.first()
+            objSearchCount.count = objSearchCount.count + 1
+
         objSearchCount.save()
         print("search count added")
 
@@ -30,17 +38,14 @@ class Count(APIView):
 
         dic = {}
 
-        qs = TblSearchCount.objects.filter(date=datetime.now().date())
+        qs = TblSearchCount.objects.filter(date=datetime.now().date()).order_by("-count")
 
-        for obj in qs:
-            if obj.word not in dic.keys():
-                dic[obj.word] = 1
-            else:
-                dic[obj.word] = dic[obj.word] + 1
-            # Calculated the count of each word and stored in a dictionary
+        for c,obj in enumerate(qs):
+            if c == 3:
+                break
 
-        dic = {k: v for k, v in sorted(dic.items(), key=lambda item: item[1], reverse=True)}
-        # Sorted the dictionary by number of searches descending
+            dic[obj.word] = obj.count
+
 
         return JsonResponse(dic)
 
