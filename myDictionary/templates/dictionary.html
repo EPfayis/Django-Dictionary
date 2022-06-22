@@ -6,12 +6,20 @@
 </head>
 <body>
 
-<h1>
-    Hello Friends
-</h1>
-        <form >
-            <input type="text" name="word"><br>
-            <input type="button" name="btnTranslate">
+<h1> Dictionary </h1>
+
+        <form action="">
+            <b>word: </b> <br>
+            <input type="text" name="word" value={{word}}><br>
+            <input type="submit">
         </form>
+
+Meaning : {{meaning}}
+
+<br><br><br>
+<b>Top search:</b> <br><br>
+{% for key,value in topSearch.items %}
+{{key}} : {{ value }} <br>
+{% endfor %}
 </body>
 </html>

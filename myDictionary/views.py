@@ -53,21 +53,26 @@ class Count(APIView):
 class DicTemplate(APIView):
 
     def get(self,request):
+        try:
 
-        dicContent = {
-            "meaning" : "",
-            "topSearch" : {},
-        }
+            dicContent = {
+                "meaning" : "",
+                "topSearch" : {},
+            }
 
-        word = request.GET.get("word","")
-        dicContent["word"] = word
+            word = request.GET.get("word","")
+            dicContent["word"] = word
+            print("request accepted")
 
-        if word != "":
-            meaning = requests.get("http://127.0.0.1:8000/dict/?word=" + word).json()
-            dicContent["meaning"] = meaning["meaning"]
+            if word != "":
+                meaning = requests.get("http://127.0.0.1:8000/dict/?word=" + word).json()
+                dicContent["meaning"] = meaning["meaning"]
+                print("meaning fetched")
 
-        topSearch = requests.get("http://127.0.0.1:8000/dict/count").json()
-        dicContent["topSearch"] = topSearch
+            topSearch = requests.get("http://127.0.0.1:8000/dict/count").json()
+            dicContent["topSearch"] = topSearch
+            print("top search optained")
 
-
-        return render(request, "dictionary.html",dicContent)
+            return render(request, "dictionary.html",dicContent)
+        except Exception as e:
+            return JsonResponse({"error" : str(e)})

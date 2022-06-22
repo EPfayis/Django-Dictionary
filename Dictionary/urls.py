@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from myDictionary.views import Dict
+from myDictionary.views import Dict, DicTemplate
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dict/', include("myDictionary.urls")),
+    path('template/', DicTemplate.as_view(),name="abc"),
 ]
