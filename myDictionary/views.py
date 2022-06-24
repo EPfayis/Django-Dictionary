@@ -5,7 +5,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from django.http import HttpResponse, JsonResponse
 from .models import TblSearchCount
-
+from django.core.cache import cache
 
 class Dict(APIView):
 
@@ -27,8 +27,13 @@ class Dict(APIView):
         objSearchCount.save()
         print("search count added")
 
-        res = requests.get("https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ml&dt=t&q=" + word)
+        if cache.get(word):
+            print("from cache")
+            return JsonResponse({"meaning":cache.get(word)})
 
+        res = requests.get("https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ml&dt=t&q=" + word)
+        cache.set(word, res.json()[0][0][0])
+        print("from api")
         return JsonResponse({"meaning":res.json()[0][0][0]})
 
 
